@@ -1,14 +1,26 @@
-package tests.checkingCatalogSections;
+package tests;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebElement;
-import tests.base.BaseTest;
+import pages.MainPage;
+import pages.OnlinerCatalogPage;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static tests.testUtils.TestUtils.*;
+import static tests.TestUtils.*;
 
 public class CheckingCatalogSectionsTest extends BaseTest {
+    private static MainPage mainPage;
+    private static OnlinerCatalogPage onlinerCatalogPage;
+
+    @BeforeAll
+    public static void classInit(){
+        mainPage = new MainPage();
+        onlinerCatalogPage = new OnlinerCatalogPage();
+    }
 
     @Test
     public void isAllCatalogSectionsExistAndDisplayed() {
@@ -16,8 +28,11 @@ public class CheckingCatalogSectionsTest extends BaseTest {
                 "Дом и сад","Авто и мото","Красота и спорт","Детям и мамам","Работа и офис");
         mainPage.clickOnCatalog();
         List<WebElement> elements = onlinerCatalogPage.findCatalogSections();
-        List<String> elementsText = elements.stream().map(WebElement::getText).toList();
-        assertTrue(isSectionExist(sections,elementsText) && isSectionDisplayed(elements));
+        List<String> elementsText = onlinerCatalogPage.getCatalogSectionText();
+        assertAll(
+                () -> assertTrue(isSectionDisplayed(elements),"Some 'catalog' sections doesn't displayed"),
+                () -> assertThat(elementsText).containsAll(sections)
+        );
     }
 
 }
